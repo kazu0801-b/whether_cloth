@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code related files
+serena/
+.serena/
+**/serena/**
+claude/
+.claude/
+**/claude/**
+
+# AI assistant files
+*.claude
+*.serena
+.claude*
+.serena*
