@@ -1123,11 +1123,11 @@ export const useWeatherLogic = (apiKey: string) => {
 
   const getCurrentPrecipitationProbability = useCallback((forecastData: ForecastData): number => {
     const now = new Date();
-    let closestForecast = null;
+    let closestForecast: (typeof forecastData.list)[0] | null = null;
     let minTimeDiff = Infinity;
 
     // 現在時刻に最も近い予報データを見つける
-    forecastData.list.forEach(forecast => {
+    for (const forecast of forecastData.list) {
       const forecastTime = new Date(forecast.dt * 1000);
       const timeDiff = Math.abs(forecastTime.getTime() - now.getTime());
       
@@ -1135,10 +1135,10 @@ export const useWeatherLogic = (apiKey: string) => {
         minTimeDiff = timeDiff;
         closestForecast = forecast;
       }
-    });
+    }
 
-    if (closestForecast) {
-      const pop = Math.round((closestForecast.pop || 0) * 100);
+    if (closestForecast && 'pop' in closestForecast && closestForecast.pop !== undefined) {
+      const pop = Math.round(closestForecast.pop * 100);
       console.log(`現在時刻に最も近い予報: ${closestForecast.dt_txt}, 降水確率: ${pop}%`);
       return pop;
     }

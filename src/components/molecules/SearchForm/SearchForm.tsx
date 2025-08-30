@@ -37,14 +37,14 @@ export const SearchForm = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            disabled={isLoading}
+            isDisabled={isLoading}
           />
         </InputGroup>
         <Button
           onClick={onSubmit}
           colorScheme="green"
           leftIcon={BsSearch}
-          disabled={isLoading}
+          isDisabled={isLoading}
         >
           検索
         </Button>

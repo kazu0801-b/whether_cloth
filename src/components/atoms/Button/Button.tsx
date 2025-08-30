@@ -3,7 +3,7 @@
 import { Button as ChakraButton, ButtonProps as ChakraButtonProps, Icon } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 
-interface ButtonProps extends ChakraButtonProps {
+interface ButtonProps extends Omit<ChakraButtonProps, 'leftIcon' | 'rightIcon'> {
   leftIcon?: IconType;
   rightIcon?: IconType;
 }
