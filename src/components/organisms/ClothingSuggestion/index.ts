@@ -1,0 +1,1 @@
+export { ClothingSuggestion } from './ClothingSuggestion';

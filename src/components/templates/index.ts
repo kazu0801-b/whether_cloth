@@ -1,0 +1,1 @@
+export { WeatherAppTemplate } from './WeatherAppTemplate';
