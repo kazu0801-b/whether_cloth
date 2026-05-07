@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 export type SignupInput = {
   username: string;
@@ -9,6 +10,16 @@ export type SignupInput = {
 export type LoginInput = {
   email: string;
   password: string;
+};
+
+export type LoginResponse = {
+  message: string;
+  token: string;
+};
+
+export type MeResponse = {
+  id: number;
+  email: string;
 };
 
 export async function signup(input: SignupInput): Promise<string> {
@@ -29,7 +40,7 @@ export async function signup(input: SignupInput): Promise<string> {
   return text;
 }
 
-export async function login(input: LoginInput): Promise<string> {
+export async function login(input: LoginInput): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: {
@@ -38,25 +49,28 @@ export async function login(input: LoginInput): Promise<string> {
     body: JSON.stringify(input),
   });
 
-  const text = await response.text();
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(text || "login failed");
+    throw new Error(data?.message || "login failed");
   }
 
-  return text;
+  return data;
 }
 
-export async function getMe(): Promise<string> {
+export async function getMe(token: string): Promise<MeResponse> {
   const response = await fetch(`${API_BASE_URL}/me`, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
-  const text = await response.text();
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(text || "failed to fetch me");
+    throw new Error(data?.message || "failed to fetch me");
   }
 
-  return text;
+  return data;
 }
