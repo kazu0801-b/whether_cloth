@@ -22,7 +22,9 @@ export default function LoginPage() {
         password,
       });
 
-      setMessage(result);
+      localStorage.setItem("authToken", result.token);
+
+      setMessage(result.message);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
