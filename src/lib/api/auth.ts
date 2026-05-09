@@ -49,13 +49,13 @@ export async function login(input: LoginInput): Promise<LoginResponse> {
     body: JSON.stringify(input),
   });
 
-  const data = await response.json();
+  const text = await response.text();
 
   if (!response.ok) {
-    throw new Error(data?.message || "login failed");
+    throw new Error(text || "login failed");
   }
 
-  return data;
+  return JSON.parse(text) as LoginResponse;
 }
 
 export async function getMe(token: string): Promise<MeResponse> {
