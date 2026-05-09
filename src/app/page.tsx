@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   VStack,
@@ -282,6 +283,21 @@ export default function Home() {
         />
       </VStack>
 
+            <Center>
+        <VStack spacing={2} mb={6}>
+          <Text fontSize="sm" color="gray.600">
+            アカウントメニュー
+          </Text>
+
+          <VStack spacing={2}>
+            <Link href="/signup">新規登録</Link>
+            <Link href="/login">ログイン</Link>
+            <Link href="/me">マイページ</Link>
+            <Link href="/logout">ログアウト</Link>
+          </VStack>
+        </VStack>
+      </Center>
+      
       {!weather && !loading && !isFirstTime && apiKey && (
         <VStack spacing={6}>
           <Center>
