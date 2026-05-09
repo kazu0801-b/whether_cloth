@@ -32,7 +32,164 @@
 ## セットアップ
 
 ### 1) インストール
-```bash
+
+````bash
 git clone <repository-url>
 cd weather_cloth
 npm install
+
+### 2) フロントエンドを起動
+
+```bash
+npm run dev
+````
+
+起動後、ブラウザで以下にアクセスします。
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Goバックエンド連携について
+
+このアプリの認証機能は、別リポジトリの Go バックエンドと連携しています。
+
+フロントエンドだけを起動している場合、ログイン・新規登録などの認証機能は動作しません。
+
+認証機能を使う場合は、別ターミナルで Go バックエンドも起動してください。
+
+### Goバックエンドの起動
+
+```bash
+cd /Users/apple/Documents/weather-outfit-portfolio/backend
+go run cmd/api/main.go
+```
+
+起動できると、以下のように表示されます。
+
+```text
+database connected
+server is running on :8080
+```
+
+---
+
+## 認証機能の確認手順
+
+### 1) 新規登録
+
+ブラウザで以下にアクセスします。
+
+```text
+http://localhost:3000/signup
+```
+
+入力例：
+
+```text
+ユーザー名: testuser
+メールアドレス: frontend-test@example.com
+パスワード: abc12345
+```
+
+成功すると、ユーザーが作成されます。
+
+すでに登録済みのメールアドレスを使った場合は、以下のようなエラーになります。
+
+```text
+email already exists
+```
+
+### 2) ログイン
+
+ブラウザで以下にアクセスします。
+
+```text
+http://localhost:3000/login
+```
+
+登録済みのメールアドレスとパスワードを入力します。
+
+成功すると、JWTトークンがブラウザの `localStorage` に保存され、自動で `/me` に移動します。
+
+### 3) マイページ確認
+
+```text
+http://localhost:3000/me
+```
+
+ログイン済みの場合、保存済みJWTトークンを使ってGoバックエンドの `/me` を呼び出し、ログイン中ユーザー情報を表示します。
+
+表示例：
+
+```text
+ID: 7 / Email: frontend-test2@example.com
+```
+
+### 4) ログアウト
+
+```text
+http://localhost:3000/logout
+```
+
+ログアウトすると、`localStorage` に保存されている `authToken` が削除され、ログイン画面へ移動します。
+
+---
+
+## よくあるエラー
+
+### Failed to fetch
+
+ログインや新規登録で `Failed to fetch` が表示される場合、Goバックエンドが起動していない可能性があります。
+
+以下を確認してください。
+
+```bash
+cd /Users/apple/Documents/weather-outfit-portfolio/backend
+go run cmd/api/main.go
+```
+
+Goバックエンドが起動しているか確認するには、別ターミナルで以下を実行します。
+
+```bash
+curl http://localhost:8080/me
+```
+
+以下が返れば、Goバックエンドは起動しています。
+
+```text
+authorization header required
+```
+
+この表示は、`/me` にJWTトークンを付けていないために出るもので、Goバックエンドが反応している証拠です。
+
+---
+
+## 認証関連ページ
+
+| パス      | 内容                   |
+| --------- | ---------------------- |
+| `/signup` | 新規登録               |
+| `/login`  | ログイン               |
+| `/me`     | ログイン中ユーザー確認 |
+| `/logout` | ログアウト             |
+
+---
+
+## 補足
+
+ローカル開発では、フロントエンドは以下で起動します。
+
+```text
+http://localhost:3000
+```
+
+Goバックエンドは以下で起動します。
+
+```text
+http://localhost:8080
+```
+
+そのため、認証機能を確認する場合は、フロントエンドとGoバックエンドの両方を起動してください。
