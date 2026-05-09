@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { login } from "@/lib/api/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +27,9 @@ export default function LoginPage() {
       localStorage.setItem("authToken", result.token);
 
       setMessage(result.message);
+
+      router.push("/me");
+
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
