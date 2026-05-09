@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LogoutPage() {
+  const router = useRouter();
   const [message, setMessage] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setMessage("ログアウトしました。");
+    router.push("/login");
   };
 
   return (
