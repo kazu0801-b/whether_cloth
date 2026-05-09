@@ -44,6 +44,7 @@ export default function Home() {
   const [apiKey, setApiKey] = useState<string>("");
   const [tempApiKey, setTempApiKey] = useState<string>("");
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -60,15 +61,19 @@ export default function Home() {
   } = useWeatherLogic(apiKey);
 
   // ローカルストレージからAPIキーを読み込み
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('openweather_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      setIsFirstTime(false);
-    } else {
-      setIsFirstTime(true);
-    }
-  }, []);
+useEffect(() => {
+  const savedApiKey = localStorage.getItem("openweather_api_key");
+  const authToken = localStorage.getItem("authToken");
+
+  if (savedApiKey) {
+    setApiKey(savedApiKey);
+    setIsFirstTime(false);
+  } else {
+    setIsFirstTime(true);
+  }
+
+  setIsLoggedIn(!!authToken);
+}, []);
 
   // APIキー設定関数
   const saveApiKey = () => {
@@ -283,7 +288,7 @@ export default function Home() {
         />
       </VStack>
 
-            <Center>
+      <Center>
         <VStack spacing={2} mb={6}>
           <Text fontSize="sm" color="gray.600">
             アカウントメニュー
