@@ -1,7 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Center,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { login } from "@/lib/api/auth";
 
 export default function LoginPage() {
@@ -12,12 +27,14 @@ export default function LoginPage() {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setMessage("");
     setError("");
+    setIsSubmitting(true);
 
     try {
       const result = await login({
@@ -36,41 +53,91 @@ export default function LoginPage() {
       } else {
         setError("login failed");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>ログイン</h1>
+    <Center minH="100vh" bg="gray.50" px={4}>
+      <Box
+        w="full"
+        maxW="420px"
+        bg="white"
+        p={8}
+        borderRadius="xl"
+        boxShadow="lg"
+      >
+        <VStack spacing={6} align="stretch">
+          <Box textAlign="center">
+            <Heading size="lg">ログイン</Heading>
+            <Text mt={2} color="gray.600" fontSize="sm">
+              登録済みのメールアドレスでログインしてください
+            </Text>
+          </Box>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>メールアドレス</label>
-          <br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+          <form onSubmit={handleSubmit}>
+            <VStack spacing={4} align="stretch">
+              <FormControl isRequired>
+                <FormLabel>メールアドレス</FormLabel>
+                <Input
+                  type="email"
+                  placeholder="example@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
 
-        <div>
-          <label>パスワード</label>
-          <br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+              <FormControl isRequired>
+                <FormLabel>パスワード</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="パスワードを入力"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormControl>
 
-        <button type="submit" style={{ marginTop: 16 }}>
-          ログインする
-        </button>
-      </form>
+              <Button
+                type="submit"
+                colorScheme="blue"
+                isLoading={isSubmitting}
+                loadingText="ログイン中..."
+                w="full"
+              >
+                ログインする
+              </Button>
+            </VStack>
+          </form>
 
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </main>
+          {message && (
+            <Alert status="success" borderRadius="md">
+              <AlertIcon />
+              {message}
+            </Alert>
+          )}
+
+          {error && (
+            <Alert status="error" borderRadius="md">
+              <AlertIcon />
+              {error}
+            </Alert>
+          )}
+
+          <Text textAlign="center" fontSize="sm" color="gray.600">
+            アカウントをお持ちでない方は{" "}
+            <Link as={NextLink} href="/signup" color="blue.500" fontWeight="bold">
+              新規登録
+            </Link>
+          </Text>
+
+          <Text textAlign="center" fontSize="sm">
+            <Link as={NextLink} href="/" color="gray.500">
+              トップページへ戻る
+            </Link>
+          </Text>
+        </VStack>
+      </Box>
+    </Center>
   );
 }
