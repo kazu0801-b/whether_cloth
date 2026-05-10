@@ -295,15 +295,38 @@ useEffect(() => {
           </Text>
 
           <VStack spacing={2}>
-            <Link href="/signup">新規登録</Link>
-            <Link href="/login">ログイン</Link>
-            <Link href="/me">マイページ</Link>
-            <Link href="/logout">ログアウト</Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/me">マイページ</Link>
+                <Link href="/logout">ログアウト</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/signup">新規登録</Link>
+                <Link href="/login">ログイン</Link>
+              </>
+            )}
           </VStack>
         </VStack>
       </Center>
       
-      {!weather && !loading && !isFirstTime && apiKey && (
+        {!isLoggedIn && (
+      <VStack spacing={4} mt={6} mb={8}>
+        <Alert status="info" borderRadius="lg">
+          <AlertIcon />
+          <VStack align="start" spacing={2}>
+            <Text fontWeight="bold">
+              天気に応じた服装提案を利用するにはログインが必要です
+            </Text>
+            <Text fontSize="sm">
+              新規登録またはログイン後に、現在地の天気取得・都市名検索・服装提案を利用できます。
+            </Text>
+          </VStack>
+        </Alert>
+      </VStack>
+    )}
+
+      {isLoggedIn && !weather && !loading && !isFirstTime && apiKey && (
         <VStack spacing={6}>
           <Center>
             <Button
@@ -354,14 +377,14 @@ useEffect(() => {
         </VStack>
       )}
 
-      {loading && (
+      {isLoggedIn && loading && (
         <VStack spacing={4}>
           <Spinner size="xl" color="blue.500" thickness="4px" />
           <Text color="gray.600" fontSize="lg">天気情報を取得中...</Text>
         </VStack>
       )}
 
-      {error && (
+      {isLoggedIn && error && (
         <VStack spacing={4}>
           <Alert status="error" borderRadius="lg">
             <AlertIcon />
@@ -377,7 +400,7 @@ useEffect(() => {
         </VStack>
       )}
 
-      {weather && outfitSuggestion && (
+      {isLoggedIn && weather && outfitSuggestion && (
         <VStack spacing={8} w="full">
           <WeatherDisplay weather={weather} />
           <ClothingSuggestion suggestion={outfitSuggestion} />
