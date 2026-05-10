@@ -1,23 +1,41 @@
 "use client";
 
 import { useState } from "react";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Center,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { signup } from "@/lib/api/auth";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setMessage("");
     setError("");
+    setIsSubmitting(true);
 
     try {
       const result = await signup({
@@ -27,6 +45,7 @@ export default function SignupPage() {
       });
 
       setMessage(result);
+
       router.push("/login");
     } catch (err) {
       if (err instanceof Error) {
@@ -34,50 +53,100 @@ export default function SignupPage() {
       } else {
         setError("signup failed");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>新規登録</h1>
+    <Center minH="100vh" bg="gray.50" px={4}>
+      <Box
+        w="full"
+        maxW="420px"
+        bg="white"
+        p={8}
+        borderRadius="xl"
+        boxShadow="lg"
+      >
+        <VStack spacing={6} align="stretch">
+          <Box textAlign="center">
+            <Heading size="lg">新規登録</Heading>
+            <Text mt={2} color="gray.600" fontSize="sm">
+              アカウントを作成してログイン機能を利用できます
+            </Text>
+          </Box>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>ユーザー名</label>
-          <br />
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
+          <form onSubmit={handleSubmit}>
+            <VStack spacing={4} align="stretch">
+              <FormControl isRequired>
+                <FormLabel>ユーザー名</FormLabel>
+                <Input
+                  placeholder="testuser"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </FormControl>
 
-        <div>
-          <label>メールアドレス</label>
-          <br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+              <FormControl isRequired>
+                <FormLabel>メールアドレス</FormLabel>
+                <Input
+                  type="email"
+                  placeholder="example@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
 
-        <div>
-          <label>パスワード</label>
-          <br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+              <FormControl isRequired>
+                <FormLabel>パスワード</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="8文字以上を推奨"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormControl>
 
-        <button type="submit" style={{ marginTop: 16 }}>
-          登録する
-        </button>
-      </form>
+              <Button
+                type="submit"
+                colorScheme="green"
+                isLoading={isSubmitting}
+                loadingText="登録中..."
+                w="full"
+              >
+                登録する
+              </Button>
+            </VStack>
+          </form>
 
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </main>
+          {message && (
+            <Alert status="success" borderRadius="md">
+              <AlertIcon />
+              {message}
+            </Alert>
+          )}
+
+          {error && (
+            <Alert status="error" borderRadius="md">
+              <AlertIcon />
+              {error}
+            </Alert>
+          )}
+
+          <Text textAlign="center" fontSize="sm" color="gray.600">
+            すでにアカウントをお持ちの方は{" "}
+            <Link as={NextLink} href="/login" color="blue.500" fontWeight="bold">
+              ログイン
+            </Link>
+          </Text>
+
+          <Text textAlign="center" fontSize="sm">
+            <Link as={NextLink} href="/" color="gray.500">
+              トップページへ戻る
+            </Link>
+          </Text>
+        </VStack>
+      </Box>
+    </Center>
   );
 }
